@@ -9,6 +9,7 @@ import { METRICS, SKILLS, DASHBOARDS, SQL_QUERIES } from "@/lib/portfolioData";
 import DataIsekaiSection from "@/components/DataIsekaiSection";
 import ProgramsSection from "@/components/ProgramsSection";
 import LinkLineSection from "@/components/LinkLineSection";
+import portfolioContent from "@/lib/portfolioContent.json";
 
 // ── Design tokens ──────────────────────────────────────
 const BG   = "#0a0a0b";
@@ -215,7 +216,7 @@ function Nav() {
           style={{ fontFamily: MONO, fontSize: "0.72rem", fontWeight: 600, color: BG, background: ACCENT, padding: "0.5rem 1.1rem", borderRadius: 4, border: "none", cursor: "pointer", transition: "background 0.2s" }}>
           Get in touch
         </button>
-        <button className="md:hidden" onClick={() => setMobileOpen(o => !o)}
+        <button className="md:hidden" onClick={() => setMobileOpen(o => !o)} aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={mobileOpen} aria-controls="mobile-navigation"
           style={{ background: "none", border: "none", color: TEXT, cursor: "pointer", fontSize: "1.2rem" }}>
           {mobileOpen ? "✕" : "☰"}
         </button>
@@ -223,7 +224,7 @@ function Nav() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div style={{
+        <div id="mobile-navigation" style={{
           position: "absolute", top: 56, left: 0, right: 0,
           background: "rgba(10,10,11,0.97)", padding: "1rem",
           borderBottom: `1px solid ${BORDER}`, display: "flex", flexDirection: "column", gap: "0.5rem",
@@ -249,24 +250,37 @@ function Nav() {
 }
 
 // ── Dashboard lightbox ─────────────────────────────────
-function DashboardLightbox({ dash, onClose }: { dash: typeof DASHBOARDS[0]; onClose: () => void }) {
+function DashboardLightbox({ dash, onClose, triggerRef }: { dash: typeof DASHBOARDS[0]; onClose: () => void; triggerRef: React.RefObject<HTMLButtonElement | null> }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    closeButtonRef.current?.focus();
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "Tab") {
+        const items = dialogRef.current?.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], iframe, [tabindex]:not([tabindex="-1"])');
+        if (!items?.length) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
     document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
-  }, [onClose]);
+    return () => { document.removeEventListener("keydown", handler); triggerRef.current?.focus(); };
+  }, [onClose, triggerRef]);
   return (
-    <div onClick={onClose} style={{
+    <div ref={dialogRef} role="dialog" aria-modal="true" aria-label={`${dash.title} preview`} onClick={onClose} style={{
       position: "fixed", inset: 0, zIndex: 999,
       background: "rgba(0,0,0,0.92)", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", cursor: "pointer",
     }}>
-      <button onClick={onClose} style={{
+      <button ref={closeButtonRef} type="button" aria-label={`Close ${dash.title} preview`} onClick={onClose} style={{
         position: "absolute", top: "1.5rem", right: "1.5rem",
         fontFamily: MONO, fontSize: "0.7rem", color: TEXT3, background: BG3,
         border: `1px solid ${BORDER}`, padding: "0.4rem 0.8rem", borderRadius: 4, cursor: "pointer",
       }}>✕ close</button>
       <div onClick={e => e.stopPropagation()} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem", maxWidth: "90vw" }}>
-        <img src={dash.image} alt={dash.title}
+        <img src={dash.image} alt=""
           style={{ maxWidth: "90vw", maxHeight: "80vh", borderRadius: 8, border: `1px solid ${BORDER2}`, boxShadow: "0 24px 80px rgba(0,0,0,0.8)", objectFit: "contain" }} />
         <p style={{ fontFamily: MONO, fontSize: "0.65rem", color: TEXT3, textAlign: "center" }}>{dash.title} — {dash.subtitle}</p>
       </div>
@@ -278,9 +292,10 @@ function DashboardLightbox({ dash, onClose }: { dash: typeof DASHBOARDS[0]; onCl
 function DashboardCard({ dash, index }: { dash: typeof DASHBOARDS[0]; index: number }) {
   const { ref, inView } = useInView();
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   return (
     <>
-      {lightboxOpen && <DashboardLightbox dash={dash} onClose={() => setLightboxOpen(false)} />}
+      {lightboxOpen && <DashboardLightbox dash={dash} onClose={() => setLightboxOpen(false)} triggerRef={triggerRef} />}
       <div ref={ref} className="transition-all duration-500"
         style={{
           opacity: inView ? 1 : 0,
@@ -292,9 +307,9 @@ function DashboardCard({ dash, index }: { dash: typeof DASHBOARDS[0]; index: num
           overflow: "hidden",
         }}>
         {/* Screenshot */}
-        <div className="group" onClick={() => setLightboxOpen(true)}
-          style={{ position: "relative", width: "100%", aspectRatio: "16/9", overflow: "hidden", background: "#0d0d10", cursor: "pointer" }}>
-          <img src={dash.image} alt={dash.title}
+        <button ref={triggerRef} type="button" className="group" aria-label={`Open enlarged preview for ${dash.title}`} onClick={() => setLightboxOpen(true)}
+          style={{ position: "relative", display: "block", width: "100%", aspectRatio: "16/9", overflow: "hidden", background: "#0d0d10", cursor: "zoom-in", padding: 0, border: 0, textAlign: "left" }}>
+          <img src={dash.image} alt=""
             style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top", transition: "transform 0.5s ease", display: "block" }}
             className="group-hover:scale-[1.03]" />
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 40%, rgba(10,10,11,0.85) 100%)", pointerEvents: "none" }} />
@@ -302,7 +317,7 @@ function DashboardCard({ dash, index }: { dash: typeof DASHBOARDS[0]; index: num
             style={{ position: "absolute", top: "0.6rem", right: "0.6rem", background: "rgba(10,10,11,0.75)", border: `1px solid ${BORDER2}`, borderRadius: 4, padding: "0.3rem 0.5rem", fontFamily: MONO, fontSize: "0.58rem", color: TEXT3 }}>
             ⤢ expand
           </div>
-        </div>
+        </button>
         {/* Info */}
         <div style={{ padding: "1.25rem 1.5rem 1.5rem" }}>
           <div style={{ fontFamily: MONO, fontSize: "0.6rem", color: TEXT3, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "0.4rem" }}>{dash.subtitle}</div>
@@ -380,10 +395,11 @@ function QuerySection({ query, index }: { query: (typeof SQL_QUERIES)[number]; i
 // ── Unified Projects section (tabbed) ──────────────────
 function ProjectsSection() {
   const [activeProject, setActiveProject] = useState<"isekai" | "link">("link");
-  const projectTabs = [
-    { id: "link",    label: "Seattle Link Light Rail", sub: "Ridership analysis · SQL · R" },
-    { id: "isekai", label: "Tower of Query", sub: "10-floor SQL learning game · designed and shipped" },
-  ] as const;
+  const projectTabs = portfolioContent.projects.map(project => ({
+    id: project.id as "link" | "isekai",
+    label: project.title,
+    sub: project.tabSummary,
+  }));
 
   return (
     <section id="projects" style={{ padding: "6rem clamp(2rem, 5vw, 6rem)", background: BG }}>
@@ -405,7 +421,7 @@ function ProjectsSection() {
         </div>
         <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginBottom: "2.5rem" }} className="project-tabs-mobile">
           {projectTabs.map(t => (
-            <button key={t.id} onClick={() => setActiveProject(t.id)}
+            <button key={t.id} type="button" aria-pressed={activeProject === t.id} onClick={() => setActiveProject(t.id)}
               style={{
                 fontFamily: MONO, fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.04em",
                 background: activeProject === t.id ? "rgba(124,106,255,0.12)" : BG3,
@@ -498,9 +514,9 @@ function ContactForm() {
           <input type="hidden" name="form-name" value="contact" />
           <p style={{ display: "none" }}><input name="bot-field" /></p>
           <div>
-            <label style={labelStyle}>Name</label>
+            <label htmlFor="contact-name" style={labelStyle}>Name</label>
             <input
-              type="text" name="name" required
+              id="contact-name" type="text" name="name" required
               value={values.name}
               onChange={e => setValues(v => ({ ...v, name: e.target.value }))}
               placeholder="Your name"
@@ -508,9 +524,9 @@ function ContactForm() {
             />
           </div>
           <div>
-            <label style={labelStyle}>Email</label>
+            <label htmlFor="contact-email" style={labelStyle}>Email</label>
             <input
-              type="email" name="email" required
+              id="contact-email" type="email" name="email" required
               value={values.email}
               onChange={e => setValues(v => ({ ...v, email: e.target.value }))}
               placeholder="your@email.com"
@@ -518,9 +534,9 @@ function ContactForm() {
             />
           </div>
           <div>
-            <label style={labelStyle}>Message</label>
+            <label htmlFor="contact-message" style={labelStyle}>Message</label>
             <textarea
-              name="message" required rows={4}
+              id="contact-message" name="message" required rows={4}
               value={values.message}
               onChange={e => setValues(v => ({ ...v, message: e.target.value }))}
               placeholder="What's on your mind?"
@@ -551,23 +567,42 @@ function ContactForm() {
 }
 
 // ── Main page ──────────────────────────────────────────
-const CV_PDF_URL = "/resume.pdf";
+const CV_PDF_URL = portfolioContent.resumeUrl;
 
 export default function Home() {
   const { ref: heroRef, inView: heroInView } = useInView(0.1);
   const [cvPreviewOpen, setCvPreviewOpen] = useState(false);
+  const cvReturnFocusRef = useRef<HTMLElement | null>(null);
+  const cvDialogRef = useRef<HTMLDivElement>(null);
+  const cvCloseButtonRef = useRef<HTMLButtonElement>(null);
+  const openCvPreview = () => {
+    cvReturnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setCvPreviewOpen(true);
+  };
   // Wire up global opener for nav buttons (which live outside Home's scope)
   useEffect(() => {
-    (window as any).__openCvPreview = () => setCvPreviewOpen(true);
+    (window as any).__openCvPreview = openCvPreview;
     return () => { delete (window as any).__openCvPreview; };
   }, []);
 
-  // Escape key closes CV modal
+  // Keep keyboard focus inside the resume modal and return it to its opener.
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") setCvPreviewOpen(false); };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, []);
+    if (!cvPreviewOpen) return;
+    cvCloseButtonRef.current?.focus();
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setCvPreviewOpen(false);
+      if (e.key === "Tab") {
+        const items = cvDialogRef.current?.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], iframe, [tabindex]:not([tabindex="-1"])');
+        if (!items?.length) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => { document.removeEventListener("keydown", handler); cvReturnFocusRef.current?.focus(); };
+  }, [cvPreviewOpen]);
 
   return (
     <div style={{ background: BG, color: TEXT, fontFamily: SANS, minHeight: "100vh" }}>
@@ -590,17 +625,17 @@ export default function Home() {
           {/* Left column */}
           <div style={{ opacity: 1, transform: "translateY(0)", transition: "all 0.7s ease" }}>
             <div style={{ fontFamily: MONO, fontSize: "0.65rem", color: ACCENT, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem" }}>
-              Program Management · Project Management · Data & AI Operations
+              {portfolioContent.tagline}
             </div>
-            <h1 style={{ fontFamily: DISPLAY, fontSize: "clamp(3.5rem, 8vw, 6rem)", fontWeight: 300, lineHeight: 1.05, letterSpacing: "-0.03em", marginBottom: "1rem" }}>
-              <span style={{ color: TEXT }}>Mike</span><br />
-              <em style={{ color: ACCENT2, fontStyle: "italic" }}>Winters</em>
+            <h1 aria-label={portfolioContent.name} style={{ fontFamily: DISPLAY, fontSize: "clamp(3.5rem, 8vw, 6rem)", fontWeight: 300, lineHeight: 1.05, letterSpacing: "-0.03em", marginBottom: "1rem" }}>
+              <span style={{ color: TEXT }}>{portfolioContent.name.split(" ")[0]}</span><br />
+              <em style={{ color: ACCENT2, fontStyle: "italic" }}>{portfolioContent.name.split(" ").slice(1).join(" ")}</em>
             </h1>
             <p style={{ fontFamily: SANS, fontSize: "1.1rem", fontWeight: 300, color: TEXT2, marginBottom: "1rem" }}>
-              Program & Operations Leader
+              {portfolioContent.role}
             </p>
             <p style={{ fontSize: "0.9rem", color: TEXT2, lineHeight: 1.8, marginBottom: "1.5rem", maxWidth: 480 }}>
-              I build systems and teams that make complex operations easier to run. At Meta, I lead an 80+ person annotation team, the go-to pilot team for new and complex AI workflows, while supporting reporting for a wider 400+ person, 6-region operation.
+              {portfolioContent.heroSummary}
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1.75rem" }}>
               {["Program & Project Management", "Human Evaluation & Annotation Ops", "Vendor Management", "SQL (Presto/Trino)", "Meta · Kikoff · Figure"].map(t => (
@@ -612,7 +647,7 @@ export default function Home() {
                 style={{ fontFamily: MONO, fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "#fff", background: ACCENT, border: "none", padding: "0.75rem 1.5rem", borderRadius: 4, cursor: "pointer", transition: "all 0.2s" }}>
                 View Work
               </button>
-              <button onClick={() => setCvPreviewOpen(true)}
+              <button onClick={openCvPreview}
                 style={{ fontFamily: MONO, fontSize: "0.75rem", fontWeight: 500, letterSpacing: "0.06em", textTransform: "uppercase", color: TEXT2, background: "transparent", border: `1px solid ${BORDER2}`, padding: "0.75rem 1.5rem", borderRadius: 4, cursor: "pointer", transition: "all 0.2s" }}>
                 View CV ↗
               </button>
@@ -680,10 +715,10 @@ export default function Home() {
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "4rem", alignItems: "start" }} className="grid-mobile-stack">
             <div>
               <p style={{ fontSize: "0.9rem", color: TEXT2, lineHeight: 1.85, marginBottom: "1.25rem" }}>
-                Nearly 20 years in operations have shaped how I approach delivery, quality, and leadership development. At Meta, I lead an 80+ person annotation team and built and ramped annotation workflows across 9+ languages with engineering and product. I coach 12 workstream leads and developed central training resources and onboarding for new coordinators and leaders.
+                {portfolioContent.about[0]}
               </p>
               <p style={{ fontSize: "0.9rem", color: TEXT2, lineHeight: 1.85 }}>
-                Earlier, I helped build Figure’s originations operations from pre-launch to $200M+ in monthly volume and drove operational delivery for Kikoff’s Canada expansion, including a 120-person offsite vendor team. I’m pursuing Program and Project Management roles, including outside tech.
+                {portfolioContent.about[1]}
               </p>
             </div>
             <div>
@@ -738,15 +773,15 @@ export default function Home() {
             {/* Links */}
             <div>
               <p style={{ fontSize: "0.9rem", color: TEXT2, lineHeight: 1.8, marginBottom: "2rem" }}>
-                Open to Program Manager, Project Manager, and Operations Manager roles, including opportunities outside tech. Based in Seattle, WA, open to US remote.
+                {portfolioContent.contact.roles} {portfolioContent.contact.location}
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                 {[
-                  { icon: "✉", label: "m.winters@me.com", href: "mailto:m.winters@me.com" },
-                  { icon: "in", label: "linkedin.com/in/mwinters123", href: "https://www.linkedin.com/in/mwinters123/" },
+                  { icon: "✉", label: portfolioContent.contact.emailLabel, href: portfolioContent.contact.emailHref, external: false },
+                  { icon: "in", label: portfolioContent.contact.linkedinLabel, href: portfolioContent.contact.linkedinHref, external: true },
 
                 ].map(link => (
-                  <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer"
+                  <a key={link.label} href={link.href} target={link.external ? "_blank" : undefined} rel={link.external ? "noopener noreferrer" : undefined}
                     style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.75rem 1rem", background: BG3, border: `1px solid ${BORDER}`, borderRadius: "0.5rem", textDecoration: "none", transition: "all 0.2s", color: TEXT2, fontSize: "0.85rem" }}>
                     <span style={{ fontFamily: MONO, fontSize: "0.7rem", color: ACCENT, width: 20, textAlign: "center" }}>{link.icon}</span>
                     {link.label}
@@ -763,6 +798,10 @@ export default function Home() {
       {/* ── CV PREVIEW MODAL ── */}
       {cvPreviewOpen && (
         <div
+          ref={cvDialogRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Resume preview"
           onClick={() => setCvPreviewOpen(false)}
           style={{
             position: "fixed", inset: 0, zIndex: 1000,
@@ -801,6 +840,9 @@ export default function Home() {
                   Download PDF ↓
                 </a>
                 <button
+                  ref={cvCloseButtonRef}
+                  type="button"
+                  aria-label="Close resume preview"
                   onClick={() => setCvPreviewOpen(false)}
                   style={{ fontFamily: MONO, fontSize: "0.75rem", color: TEXT2, background: "none", border: `1px solid ${BORDER}`, borderRadius: 3, padding: "0.3rem 0.6rem", cursor: "pointer", lineHeight: 1 }}
                 >

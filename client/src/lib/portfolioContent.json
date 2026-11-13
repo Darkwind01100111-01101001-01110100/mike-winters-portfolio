@@ -1,0 +1,64 @@
+{
+  "name": "Mike Winters",
+  "tagline": "Program Management · Project Management · Data & AI Operations",
+  "role": "Program & Operations Leader",
+  "heroSummary": "I build systems and teams that make complex operations easier to run. At Meta, I lead an 80+ person annotation team, the go-to pilot team for new and complex AI workflows, while supporting reporting for a wider 400+ person, 6-region operation.",
+  "about": [
+    "Nearly 20 years in operations have shaped how I approach delivery, quality, and leadership development. At Meta, I lead an 80+ person annotation team and built and ramped annotation workflows across 9+ languages with engineering and product. I coach 12 workstream leads and developed central training resources and onboarding for new coordinators and leaders.",
+    "Earlier, I helped build Figure’s originations operations from pre-launch to $200M+ in monthly volume and drove operational delivery for Kikoff’s Canada expansion, including a 120-person offsite vendor team. I’m pursuing Program and Project Management roles, including outside tech."
+  ],
+  "programs": [
+    {
+      "id": "readiness",
+      "title": "Pre-launch readiness for short-cycle work",
+      "summary": "Co-developed readiness gates for three-day work cycles, from intake and calibration through validation, production, and audit."
+    },
+    {
+      "id": "multilingual",
+      "title": "Multilingual workflow scale-up",
+      "summary": "Built and ramped annotation workflows across 9+ languages with engineering and product checkpoints."
+    },
+    {
+      "id": "quality",
+      "title": "Quality and calibration system",
+      "summary": "Connected multi-review, consensus, SME adjudication, audits, rater feedback, and guideline updates in a recurring quality loop."
+    },
+    {
+      "id": "leadership",
+      "title": "Leadership enablement and ownership",
+      "summary": "Coached 12 workstream leads, cross-trained 10+ coordinators, and clarified ownership across operations, quality, and subject-matter teams."
+    }
+  ],
+  "projects": [
+    {
+      "id": "link",
+      "title": "Seattle Link Light Rail",
+      "tabSummary": "Ridership analysis · SQL · R",
+      "summary": "A comparison of 2019 and 2025 annual FTA unlinked passenger trips for Link light rail and Sounder + ST Express (rail and bus).",
+      "links": [
+        { "label": "FTA monthly ridership data", "href": "https://catalog.data.gov/dataset/complete-monthly-ridership-with-adjustments-and-estimates", "external": true },
+        { "label": "Sound Transit 2019 Annual Report", "href": "https://www.soundtransit.org/sites/default/files/documents/2019-sound-transit-annual-report.pdf", "external": true },
+        { "label": "Sound Transit 2025 Fare Revenue Report", "href": "https://www.soundtransit.org/sites/default/files/documents/2025-fare-revenue-report.pdf", "external": true }
+      ]
+    },
+    {
+      "id": "isekai",
+      "title": "Tower of Query",
+      "tabSummary": "10-floor SQL learning game · designed and shipped",
+      "summary": "A 10-floor SQL learning game with browser-based SQLite execution, built with React, TypeScript, and sql.js.",
+      "links": [
+        { "label": "Play the Tower", "href": "https://data-tower.netlify.app/", "external": true },
+        { "label": "View source on GitHub", "href": "https://github.com/Darkwind01100111-01101001-01110100/data-learning-isekai", "external": true }
+      ]
+    }
+  ],
+  "contact": {
+    "roles": "Open to Program Manager, Project Manager, and Operations Manager roles, including opportunities outside tech.",
+    "location": "Based in Seattle, WA; open to U.S. remote.",
+    "emailLabel": "m.winters@me.com",
+    "emailHref": "mailto:m.winters@me.com",
+    "linkedinLabel": "linkedin.com/in/mwinters123",
+    "linkedinHref": "https://www.linkedin.com/in/mwinters123/"
+  },
+  "resumeUrl": "/resume.pdf"
+}

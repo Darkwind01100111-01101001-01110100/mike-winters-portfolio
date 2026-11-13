@@ -66,9 +66,9 @@ SELECT
 FROM work_items
 GROUP BY work_type`,
     sampleOutput: [
-      { work_type: "Review", items_created: "2", items_completed: "1", completion_pct: "50.0%", avg_days: "1.0" },
-      { work_type: "Audit", items_created: "1", items_completed: "1", completion_pct: "100.0%", avg_days: "2.0" },
+      { work_type: "Review", items_created: "2", items_completed: "1", completion_pct: "50.0%", avg_days_to_complete: "1.0" },
+      { work_type: "Audit", items_created: "1", items_completed: "1", completion_pct: "100.0%", avg_days_to_complete: "2.0" },
     ],
-    outputColumns: ["work_type", "items_created", "items_completed", "completion_pct", "avg_days"],
+    outputColumns: ["work_type", "items_created", "items_completed", "completion_pct", "avg_days_to_complete"],
   },
 ];

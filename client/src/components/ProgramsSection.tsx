@@ -1,9 +1,10 @@
 import React from "react";
+import portfolioContent from "@/lib/portfolioContent.json";
 
 const cases = [
   {
     number: "01",
-    title: "Pre-launch readiness for short-cycle work",
+    title: portfolioContent.programs[0].title,
     problem: "Projects rotating every three to four days left little time for audit-and-fix loops.",
     role: "Co-developed the readiness framework.",
     approach: ["Intake", "Guidelines + calibration", "80% certification", "Golden-set validation", "Production", "20% audit"],
@@ -13,7 +14,7 @@ const cases = [
   },
   {
     number: "02",
-    title: "Multilingual workflow scale-up",
+    title: portfolioContent.programs[1].title,
     problem: "New language workflows required configuration and usability checks before they could expand.",
     role: "Built, piloted, and ramped workflows with engineering and product.",
     approach: ["Pilot cohort", "Compatibility checks", "Language ramp", "Steady-state review"],
@@ -23,7 +24,7 @@ const cases = [
   },
   {
     number: "03",
-    title: "Quality and calibration system",
+    title: portfolioContent.programs[2].title,
     problem: "Judgment-based evaluation needs consistent guidance, reliable review, and a path to resolve disagreement.",
     role: "Helped establish the quality and calibration practices used across workstreams.",
     approach: ["Multi-review", "Consensus", "Third-review SME adjudication", "Audit + outlier review", "Rater feedback", "Guideline update"],
@@ -33,7 +34,7 @@ const cases = [
   },
   {
     number: "04",
-    title: "Leadership enablement and ownership",
+    title: portfolioContent.programs[3].title,
     problem: "A growing operation needed clear ownership, repeatable onboarding, and prepared workstream leads.",
     role: "Coach 12 workstream leads, cross-train 10+ coordinators, and deliver five training programs.",
     approach: ["Central resources", "Lead onboarding", "Clear role ownership", "Joint guideline review"],
