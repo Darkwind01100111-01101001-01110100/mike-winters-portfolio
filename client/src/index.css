@@ -1,0 +1,247 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@custom-variant dark (&:is(.dark *));
+/* ═══════════════════════════════════════════════════════
+   DESIGN SYSTEM: "V3 Obsidian"
+   Deep black base · Violet/lavender accents · Fraunces display
+   Space Grotesk (prose) + JetBrains Mono (code/labels)
+═══════════════════════════════════════════════════════ */
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+:root {
+  --radius: 0.5rem;
+  /* V3 Obsidian palette */
+  --obs-bg:     #0a0a0b;
+  --obs-bg2:    #111113;
+  --obs-bg3:    #16161a;
+  --obs-border: rgba(255,255,255,0.07);
+  --obs-border2: rgba(255,255,255,0.12);
+  --obs-text:   #e8e6f0;
+  --obs-text2:  #9b97b0;
+  --obs-text3:  #6b6880;
+  --obs-accent: #7c6aff;
+  --obs-accent2: #a594ff;
+  --obs-glow:   rgba(124,106,255,0.18);
+  --obs-glow2:  rgba(124,106,255,0.08);
+  /* Semantic tokens — mapped to Obsidian palette */
+  --background: oklch(0.12 0.015 270);
+  --foreground: oklch(0.93 0.008 270);
+  --card: oklch(0.16 0.018 270);
+  --card-foreground: oklch(0.93 0.008 270);
+  --popover: oklch(0.16 0.018 270);
+  --popover-foreground: oklch(0.93 0.008 270);
+  --primary: oklch(0.60 0.22 280);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.20 0.02 270);
+  --secondary-foreground: oklch(0.85 0.008 270);
+  --muted: oklch(0.18 0.018 270);
+  --muted-foreground: oklch(0.55 0.015 270);
+  --accent: oklch(0.60 0.22 280);
+  --accent-foreground: oklch(0.98 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 7%);
+  --input: oklch(1 0 0 / 10%);
+  --ring: oklch(0.60 0.22 280);
+}
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Space Grotesk', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background: var(--obs-bg);
+    color: var(--obs-text);
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href] {
+    @apply cursor-pointer;
+  }
+}
+@layer components {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
+  @media (min-width: 640px) {
+    .container { padding-left: 1.5rem; padding-right: 1.5rem; }
+  }
+  @media (min-width: 1024px) {
+    .container { padding-left: 2rem; padding-right: 2rem; max-width: 1280px; }
+  }
+  /* Responsive grid helpers — override inline styles at mobile breakpoints */
+  @media (max-width: 767px) {
+    .grid-mobile-stack {
+      grid-template-columns: 1fr !important;
+      gap: 2rem !important;
+    }
+  }
+  .grid-dashboard-cards {
+    grid-template-columns: 1fr !important;
+  }
+  @media (min-width: 640px) {
+    .grid-dashboard-cards { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)) !important; }
+  }
+  /* Section padding: 3.5rem on mobile, 6rem on desktop */
+  .section-mobile-pad {
+    padding-top: 3.5rem !important;
+    padding-bottom: 3.5rem !important;
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+  /* Desktop: restore full 6rem vertical + fluid horizontal */
+  @media (min-width: 768px) {
+    .section-mobile-pad {
+      padding-top: 6rem !important;
+      padding-bottom: 6rem !important;
+      padding-left: clamp(2rem, 5vw, 6rem) !important;
+      padding-right: clamp(2rem, 5vw, 6rem) !important;
+    }
+  }
+  /* SQL query card — reduce inner padding on mobile */
+  .query-card-pad {
+    padding: 1rem 1rem !important;
+  }
+  @media (min-width: 640px) {
+    .query-card-pad { padding: 1.25rem 1.5rem !important; }
+  }
+  /* SQL code block — reduce font size on mobile for readability */
+  .sql-pre-mobile {
+    font-size: 0.65rem !important;
+    padding: 0.75rem !important;
+  }
+  @media (min-width: 640px) {
+    .sql-pre-mobile { font-size: 0.75rem !important; padding: 1rem !important; }
+  }
+  /* Patterns table — ensure horizontal scroll on mobile */
+  .patterns-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .patterns-table-wrap table {
+    min-width: 560px;
+  }
+  @media (min-width: 768px) {
+    .patterns-table-wrap table {
+      min-width: unset;
+      width: 100%;
+    }
+  }
+  /* Project tabs — allow wrapping and reduce font on mobile */
+  .project-tabs-mobile {
+    gap: 0 !important;
+  }
+  .project-tabs-mobile button {
+    font-size: 0.62rem !important;
+    padding: 0.5rem 0.65rem !important;
+  }
+  @media (min-width: 640px) {
+    .project-tabs-mobile { gap: 0.25rem !important; }
+    .project-tabs-mobile button { font-size: 0.7rem !important; padding: 0.6rem 1rem !important; }
+  }
+  /* Hero section — reduce horizontal padding on small screens */
+  .hero-mobile-pad {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+  @media (min-width: 640px) {
+    .hero-mobile-pad { padding-left: unset !important; padding-right: unset !important; }
+  }
+
+  /* Panel — Obsidian card style */
+  .panel {
+    background: var(--obs-bg3);
+    border: 1px solid var(--obs-border);
+    border-radius: 0.625rem;
+  }
+  /* Terminal code block */
+  .terminal-block {
+    background: oklch(0.10 0.015 270);
+    border: 1px solid rgba(124,106,255,0.2);
+    border-radius: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  /* Section label — mono eyebrow */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--obs-accent);
+  }
+  /* Metric pill */
+  .metric-pill {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(124,106,255,0.1);
+    border: 1px solid rgba(124,106,255,0.25);
+    color: var(--obs-accent2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 0.15rem 0.6rem;
+    border-radius: 0.25rem;
+  }
+  /* Teal glow — kept for backward compat with Chelsea/Pokemon */
+  .teal-glow {
+    box-shadow: 0 0 12px rgba(124,106,255,0.25);
+  }
+  /* Subtle grid background texture */
+  .grid-bg {
+    background-image:
+      linear-gradient(oklch(1 0 0 / 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(1 0 0 / 0.025) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+}
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--obs-bg); }
+::-webkit-scrollbar-thumb { background: var(--obs-accent); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--obs-accent2); }
+/* Reveal animation */
+@keyframes obsReveal {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.obs-reveal {
+  animation: obsReveal 0.55s ease forwards;
+}
+/* Pulse glow for hero */
+@keyframes obsPulse {
+  0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+  50%       { opacity: 1;   transform: translateX(-50%) scale(1.1); }
+}
