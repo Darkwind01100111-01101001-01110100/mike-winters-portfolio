@@ -7,10 +7,11 @@ const cases = [
     title: portfolioContent.programs[0].title,
     problem: "Projects rotating every three to four days left little time for audit-and-fix loops.",
     role: "Co-developed the readiness framework.",
-    approach: ["Intake", "Guidelines + calibration", "80% certification", "Golden-set validation", "Production", "20% audit"],
+    approach: ["Intake", "Guidelines + calibration", "Quiz score ≥80%", "Golden-set validation", "Production", "20% audit"],
     result: "High-complexity, net-new tasks delivered on a three-day SLA.",
+    outcomeLabel: "Result",
     visualLabel: "Readiness gates · three-day cycle",
-    loop: "If certification or validation misses the bar, return to guideline calibration.",
+    loop: "If the quiz score is below 80% or golden-set validation misses its bar, return to guideline calibration.",
   },
   {
     number: "02",
@@ -19,6 +20,7 @@ const cases = [
     role: "Built, piloted, and ramped workflows with engineering and product.",
     approach: ["Pilot cohort", "Compatibility checks", "Language ramp", "Steady-state review"],
     result: "Workflows built and ramped across 9+ languages; the team serves as a go-to pilot group for new and complex workflows.",
+    outcomeLabel: "Result",
     visualLabel: "Pilot → ramp → steady state",
     loop: "Refine configuration and usability at each checkpoint.",
   },
@@ -29,6 +31,7 @@ const cases = [
     role: "Helped establish the quality and calibration practices used across workstreams.",
     approach: ["Multi-review", "Consensus", "Third-review SME adjudication", "Audit + outlier review", "Rater feedback", "Guideline update"],
     result: "A recurring feedback loop connecting reviewer-level metrics, audits, quality leads, and product or subject-matter experts.",
+    outcomeLabel: "Operating model",
     visualLabel: "Calibration loop",
     loop: "Guideline updates feed the next multi-review cycle.",
   },
@@ -39,6 +42,7 @@ const cases = [
     role: "Coach 12 workstream leads, cross-train 10+ coordinators, and deliver five training programs.",
     approach: ["Central resources", "Lead onboarding", "Clear role ownership", "Joint guideline review"],
     result: "Team leads own assignments and logistics; quality leads own standards and audits; product and SMEs own guideline content, with shared review before rollout.",
+    outcomeLabel: "What was implemented",
     visualLabel: "Ownership and review model",
     loop: "Coordinators support resourcing, escalations, and onboarding across the work.",
   },
@@ -86,7 +90,7 @@ export default function ProgramsSection() {
               <div style={{ fontFamily: MONO, color: ACCENT, fontSize: "0.62rem", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>CASE {item.number}</div>
               <h3 style={{ fontFamily: "'Fraunces', serif", fontWeight: 400, color: TEXT, fontSize: "1.12rem", margin: "0 0 1rem", lineHeight: 1.35 }}>{item.title}</h3>
               <div style={{ display: "grid", gap: "0.7rem" }}>
-                {[["Problem", item.problem], ["My role", item.role], ["Result", item.result]].map(([label, value]) => (
+                {[["Problem", item.problem], ["My role", item.role], [item.outcomeLabel, item.result]].map(([label, value]) => (
                   <div key={label}>
                     <div style={{ fontFamily: MONO, color: TEXT3, fontSize: "0.58rem", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.2rem" }}>{label}</div>
                     <p style={{ color: TEXT2, fontSize: "0.76rem", lineHeight: 1.65, margin: 0 }}>{value}</p>

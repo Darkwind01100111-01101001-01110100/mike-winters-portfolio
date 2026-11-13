@@ -64,7 +64,7 @@ SELECT
   unlinked_trips,
   RANK() OVER (ORDER BY unlinked_trips DESC) AS rank_among_selected_systems,
   ROUND(
-    100.0 * (unlinked_trips / NULLIF(prior_month_trips, 0) - 1),
+    100.0 * (unlinked_trips - prior_month_trips) / NULLIF(prior_month_trips, 0),
     1
   ) AS mom_growth_pct
 FROM selected_month
@@ -121,7 +121,7 @@ type CodeTab = "sql" | "sql_recovery" | "r";
 
 function AnnualUptChart() {
   const ticks = [0, 10, 20, 30, 40];
-  const groupX = [266, 520];
+  const groupX = [158, 478];
   const barWidth = 74;
   const gap = 16;
 
